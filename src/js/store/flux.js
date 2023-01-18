@@ -1,42 +1,34 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			]
+			characters: [],
+			locations: [],
+			episodes: [],
+			favorites: []
 		},
 		actions: {
-			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
+			getCharacters: async () => {
+				const response = await fetch("https://rickandmortyapi.com/api/character");
+				const data = await response.json();
+				setStore({characters: data.results})
 			},
-			loadSomeData: () => {
-				/**
-					fetch().then().then(data => setStore({ "foo": data.bar }))
-				*/
+			getLocations: async () => {
+				const response = await fetch("https://rickandmortyapi.com/api/location");
+				const data = await response.json();
+				setStore({locations: data.results})
 			},
-			changeColor: (index, color) => {
-				//get the store
+			getEpisodes: async () => {
+				const response = await fetch("https://rickandmortyapi.com/api/episode");
+				const data = await response.json();
+				setStore({episodes: data.results})
+			},
+			setFavorites: (name) => {
 				const store = getStore();
-
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
-
-				//reset the global store
-				setStore({ demo: demo });
+				if( !store.favorites.includes(name)){
+					setStore({favorites: [...store.favorites, name]});
+				}else{
+					setStore({favorites: store.favorites.filter((favName)=> favName != name)});
+				}
 			}
 		}
 	};
